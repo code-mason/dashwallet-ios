@@ -44,12 +44,26 @@ static NSString *const DWDevnetEvonetIdentifier = @"devnet-mobile-2";
     [NSString setDashCurrencySymbolAssetName:@"icon_dash_currency"];
 
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    if (![userDefaults objectForKey:CURRENT_CHAIN_TYPE_KEY]) {
-        [userDefaults setInteger:DSChainType_MainNet forKey:CURRENT_CHAIN_TYPE_KEY];
-    }
+    [userDefaults setInteger:DSChainType_DevNet forKey:CURRENT_CHAIN_TYPE_KEY];
     [[DSChainsManager sharedInstance] chainManagerForChain:[DSChain mainnet]]; //initialization
     [[DSChainsManager sharedInstance] chainManagerForChain:[DSChain testnet]]; //initialization
     DSChain *evonet = [DSChain devnetWithIdentifier:DWDevnetEvonetIdentifier];
+    if (evonet == nil) {
+        evonet = [[DSChainsManager sharedInstance]
+            registerDevnetChainWithIdentifier:DWDevnetEvonetIdentifier
+                          forServiceLocations:[self evonetServiceLocation]
+                  withMinimumDifficultyBlocks:UINT32_MAX
+                                 standardPort:20001
+                                 dapiJRPCPort:3000
+                                 dapiGRPCPort:3010
+                               dpnsContractID:@"gegjGQL5HHbGMyUYL4yaoSfzhkF9isvGGYiCVRBiz4b".base58ToData.UInt256
+                            dashpayContractID:@"Dp8ibxeTSN15tjL1PQuG3j8NkGJmzvt5eqoKoF6FhDAx".base58ToData.UInt256
+                              protocolVersion:70216
+                           minProtocolVersion:70216
+                                 sporkAddress:@"yQuAu9YAMt4yEiXBeDp3q5bKpo7jsC2eEj"
+                              sporkPrivateKey:@"cVk6u16fT1Pwd9MugowSt7VmNzN8ozE4wJjfJGC97Hf43oxRMjar"];
+    }
+
     if (evonet) {
         [evonet setDevnetNetworkName:@"Evonet"];
         [[DSChainsManager sharedInstance] chainManagerForChain:evonet];
